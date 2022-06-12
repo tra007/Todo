@@ -1,0 +1,48 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="{% static "css/tailwind.css" %}">
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+{% if messages %}
+    <ul class="absolute z-50 top-0 mx-auto left-0 right-0 flex justify-center" style="z-index: 9999">
+        {% for message in messages %}
+            <li class="message font-medium bg-gray-700 z-50 rounded-full text-white py-4 px-6 w-4/12 text-center
+                    {% if message.tags %}{{ message.tags }}{% endif %}">{{ message }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+<div class="min-h-screen flex items-center justify-center bg-purple-300">
+    <div class="bg-white p-6 rounded shadow-2xl sm:w-2/3 max-w-lg min-w-min sm:p-10 w-full mx-3 sm:mx-0 my-2">
+        <h2 class="font-bold text-2xl sm:text-3xl text-center mb-8 text-gray-800">Login</h2>
+        <form class="space-y-5" method="post">
+            {% csrf_token %}
+            <div class="space-y-2">
+                <label for="email" class="block font-semibold text-gray-700">{{ form.username.label }}</label>
+                {{ form.username }}
+            </div>
+            <div class="space-y-2">
+                <label for="password" class="block font-semibold text-gray-700">{{ form.password.label }}</label>
+                {{ form.password }}
+            </div>
+            <button type="submit"
+                    class="content-center bg-green-400 font-bold py-2 w-full rounded mt-6 hover:bg-green-500 text-white">
+                LOGIN
+            </button>
+        </form>
+        <div class="my-4 flex items-center justify-center space-between">
+            <hr class="border border-gray-200 w-2/5"/>
+            <span class="w-1/5 text-center text-gray-600">or</span>
+            <hr class="border border-gray-200 w-2/5"/>
+        </div>
+        <p class="mt-4 font-semibold text-center">Already haven't account? <a href="{% url "User:Register" %}"
+                                                                              class="text-green-600 font-bold hover:underline hover:decoration-green-600 cursor-pointer">create
+            account</a>
+        </p>
+    </div>
+</div>
+</body>
+</html>

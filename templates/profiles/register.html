@@ -1,0 +1,57 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="{% static "css/tailwind.css" %}">
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div class="min-h-screen flex items-center justify-center bg-sky-200">
+    <div class="bg-white p-6 rounded shadow-2xl sm:w-2/3 max-w-lg min-w-min sm:p-10 w-full mx-3 sm:mx-0 my-2">
+        <h2 class="font-bold text-2xl sm:text-3xl text-center mb-8 text-gray-800">Register</h2>
+        <form class="space-y-5" method="post">
+            {% csrf_token %}
+            <div class="space-y-2">
+                <label for="email" class="block font-semibold text-gray-700">{{ form.email.label }}</label>
+                {{ form.email }}
+                {% for errors in form.email.errors %}
+                    <div class="text-red-500 mt-3 w-full">{{ errors }}</div>
+                {% endfor %}
+            </div>
+            <div class="space-y-2">
+                <label for="name" class="block font-semibold text-gray-700">{{ form.name.label }}</label>
+                {{ form.name }}
+            </div>
+            <div class="space-y-2">
+                <label for="password" class="block font-semibold text-gray-700">{{ form.password.label }}</label>
+                {{ form.password }}
+                {% for errors in form.password.errors %}
+                    <div class="text-red-500 mt-3 w-full">{{ errors }}</div>
+                {% endfor %}
+            </div>
+            <div class="space-y-2">
+                <label for="passwordConfirm"
+                       class="block font-semibold text-gray-700">{{ form.passwordConfirm.label }}</label>
+                {{ form.passwordConfirm }}
+                {% for errors in form.passwordConfirm.errors %}
+                    <div class="text-red-500 mt-3 w-full">{{ errors }}</div>
+                {% endfor %}
+            </div>
+            <button type="submit"
+                    class="content-center bg-green-400 font-bold py-2 w-full rounded mt-6 hover:bg-green-500 text-white">
+                CREATE ACCOUNT
+            </button>
+        </form>
+        <div class="my-4 flex items-center justify-center space-between">
+            <hr class="border border-gray-200 w-2/5"/>
+            <span class="w-1/5 text-center text-gray-600">or</span>
+            <hr class="border border-gray-200 w-2/5"/>
+        </div>
+        <p class="mt-4 font-semibold text-center">Already a User? <a href="{% url "User:Login" %}"
+                                                                     class="text-green-600 font-bold hover:underline hover:decoration-green-600 cursor-pointer">login</a>
+        </p>
+    </div>
+</div>
+</body>
+</html>

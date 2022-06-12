@@ -1,0 +1,3 @@
+config/config.py
+venve/*
+db.sqlite3

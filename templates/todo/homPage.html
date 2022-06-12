@@ -1,0 +1,51 @@
+{% load static %}
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="{% static "css/tailwind.css" %}">
+    <title>Document</title>
+</head>
+<body class="w-screen h-screen bg-slate-300 flex justify-center content-start">
+<div class="w-3/5 flex justify-evenly  h-full items-center">
+    {% if yesterday %}
+        <a href="{% url "Todo:DetailPage" yesterday.id %}">
+            <div class="border-solid border-2 border-black rounded-2xl p-4  transition duration-700 hover:text-white hover:tracking-wider  hover:bg-red-700">
+                yesterday
+            </div>
+        </a>
+    {% endif %}
+    <a class="{% if not yesterday %}w-1/4 text-center{% endif %}" href="{% url "Todo:DetailPage" today.id %}">
+        <div class="w-full border-solid border-2 border-black rounded-2xl p-4 transition duration-700 hover:text-white hover:tracking-wider  hover:bg-blue-700">
+            Today
+        </div>
+    </a>
+    <a class="{% if not yesterday %}w-1/4 text-center{% endif %} cursor-pointer" id="tomorrow">
+        <div class="border-solid border-2 border-black rounded-2xl p-4 transition duration-700 hover:text-white hover:tracking-wider  hover:bg-green-700">
+            Tomorrow
+        </div>
+    </a>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+    $("#tomorrow").click(function (e) {
+            $.ajax(
+                {
+                    type: "POST",
+                    url: `/todo/index/`,
+                    data: {
+                        csrfmiddlewaretoken: '{{ csrf_token }}'
+                    },
+                    success: function (data) {
+                        window.location.href = `/todo/info/${data.id}`;
+                    }
+                }
+            )
+        }
+    )
+</script>
+</body>
+
+</html>

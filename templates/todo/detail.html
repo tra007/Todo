@@ -1,0 +1,127 @@
+{% load static %}
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="{% static "css/tailwind.css" %}">
+    <title>Document</title>
+</head>
+<body>
+<div class="flex justify-center items-center min-h-screen bg-[#76c893]">
+    <div class="h-auto w-96 bg-white rounded-lg p-4  shadow-md shadow-black">
+        <p class="text-center font-black text-xl mt-2 text-[#063c76]">{{ request.user.first_name }}'s To do List<br> for {{ day.time }}</p>
+
+        <div class="w-full mt-4 flex text-sm flex-col text-center justify-center ">
+            <div class="w-full ">
+                <form class="w-full flex justify-between text-center items-center" id="addform" method="post">
+                    {% csrf_token %}
+                    <div class="w-full">
+                        <input type="text" name="job"
+                               class="w-11/12 bg-gray-100 py-2.5 px-4 rounded-lg mr-2  focus:outline-none"
+                               required/>
+                        <div class="flex justify-evenly mt-2 w-full text-xl ">
+                            <div class="flex flex-row" dir="ltr">
+                                <label for="time" class="text-sm text-[#718355] mt-2 mr-1">START</label>
+                                <input type="text" id="time" name="startH"
+                                       class="bg-gray-100  rounded-md text-center focus:outline-none w-10 h-8 text-center hh N "
+                                       min="0" max="23" placeholder="H" maxlength="2"/>:
+                                <input type="text" name="startM"
+                                       class="bg-gray-100  rounded-md focus:outline-none w-10 h-8 text-center mm N"
+                                       min="0" max="59" placeholder="M" maxlength="2"/>
+                            </div>
+                            <div class="flex flex-row" dir="ltr">
+                                <label for="end" class="text-sm text-[#718355] mt-2 mr-1">END</label>
+                                <input type="text" id="end" name="finishH"
+                                       class="bg-gray-100  rounded-md focus:outline-none w-10 h-8 text-center hh N"
+                                       min="0" max="23" placeholder="H" maxlength="2"/>:
+                                <input type="text" name="finishM"
+                                       class="bg-gray-100  rounded-md focus:outline-none w-10 h-8 text-center mm N"
+                                       min="0" max="59" placeholder="M" maxlength="2"/>
+                            </div>
+                        </div>
+                    </div>
+                    <input type="submit"
+                           class="w-1/4 cursor-pointer text-white bg-[#1e6091] py-6 rounded-lg text-lg font-bold"
+                           value="ADD">
+                </form>
+            </div>
+        </div>
+        <ul class="my-4" id="itemsBox">
+            {% for item in todo %}
+                <li class=" mt-4" id="delete{{ item.id }}">
+                    <div class="flex gap-2 ">
+                        <div class="w-9/12 relative h-12 bg-[#d9ed92] rounded-[7px] flex justify-start items-center px-3">
+                            <span id="check{{ item.id }}" data-product="{{ item.id }}" onclick="checked({{ item.id }})"
+                                  class="{% if item.don %}green{% endif %} statusItems  w-7 h-7 bg-white rounded-full border border-white transition-all cursor-pointer hover:border-[#36d344] flex justify-center items-center">
+                                <i class="text-white fa fa-check"></i>
+                            </span>
+                            <strike id="strike{{ item.id }}"
+                                    class="{% if not item.don %}strike_none{% endif %} text-sm ml-4 text-[#5b7a9d] font-semibold">{{ item.job }}</strike>
+
+                            <span class="absolute right-2 font-bold text-xl cursor-pointer delete"
+                                  data-product="{{ item.id }}" id="delete" title="delete"><i
+                                    class=" text-red-500 fa fa-close"></i></span>
+                        </div>
+                        <span class="w-1/4 h-12 bg-[#d9ed92] rounded-[7px] flex justify-center text-sm text-[#5b7a9d] font-semibold items-center ">
+                            {% if item.start %}
+                                {{ item.start|date:"G:i" }}{% endif %} {% if item.finish %}-
+                            {{ item.finish|date:"G:i" }}{% endif %}
+                            {% if not item.start and not item.finish %}not set
+                                time{% endif %}</span>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="{% static "js/time.js" %}"></script>
+<script>
+    $("#addform").submit(function (e) {
+        e.preventDefault(); // avoid to execute the actual submit of the form.
+        var form = $(this);
+        $.ajax({
+            type: "POST",
+            url: "{% url "Todo:DetailPage" day.id %}",
+            data: form.serialize(), // serializes the form's elements.
+            success: function (data) {
+                document.getElementById("addform").reset()
+                $("#itemsBox").append(data["data"])
+            }
+        });
+    });
+    jQuery(document).on("click", ".statusItems", function (event) {
+        let itemId = this.dataset.product
+        console.log("1")
+        $.ajax(
+            {
+                type: "POST",
+                url: `/todo/changeStatus/`,
+                data: {
+                    "id": itemId,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+            })
+    })
+    jQuery(document).on("click", ".delete", function (event) {
+            let itemId = this.dataset.product
+            $.ajax(
+                {
+                    type: "POST",
+                    url: "/todo/deleteJob/",
+                    data: {
+                        "id": itemId,
+                        csrfmiddlewaretoken: '{{ csrf_token }}'
+                    },
+                    success: function (data) {
+                        $(`#delete${data["id"]}`).remove()
+                    }
+                })
+        }
+    )
+</script>
+</body>
+</html>

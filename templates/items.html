@@ -1,0 +1,20 @@
+<li class=" mt-4" id="delete{{ item.id }}">
+    <div class="flex gap-2 ">
+        <div class="w-9/12 relative h-12 bg-[#e0ebff] rounded-[7px] flex justify-start items-center px-3">
+                            <span id="check{{ item.id }}" data-product="{{ item.id }}" onclick="checked({{ item.id }})"
+                                  class="{% if item.don %}green{% endif %} statusItems w-7 h-7 bg-white rounded-full border border-white transition-all cursor-pointer hover:border-[#36d344] flex justify-center items-center">
+                                <i class="text-white fa fa-check"></i>
+                            </span>
+            <strike id="strike{{ item.id }}"
+                    class="{% if not item.don %}strike_none{% endif %} text-sm ml-4 text-[#5b7a9d] font-semibold">{{ item.job }}</strike>
+
+            <span class="absolute right-2 font-bold text-xl cursor-pointer delete"
+                  data-product="{{ item.id }}" id="delete" title="delete"><i
+                    class=" text-red-500 fa fa-close"></i></span>
+        </div>
+        <span class="w-1/4 h-12 bg-[#e0ebff] rounded-[7px] flex justify-center text-sm text-[#5b7a9d] font-semibold items-center ">{% if item.start %}
+            {{ item.start }}{% endif %} {% if item.finish %}-{{ item.finish }}{% endif %}
+            {% if not item.start and not item.finish %}not set
+                time{% endif %}</span>
+    </div>
+</li>
